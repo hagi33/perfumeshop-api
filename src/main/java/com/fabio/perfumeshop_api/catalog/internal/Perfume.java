@@ -58,7 +58,7 @@ public class Perfume {
     private Gender gender;
 
     @Column(name = "volume_ml", nullable = false)
-    private Integer volumeML;
+    private Integer volumeML;//Utilizamos Integer en volume porque el volume no puede ser 0, como mucho null
 
     @Column(nullable = false, precision = 6, scale = 2)
     private BigDecimal price;
