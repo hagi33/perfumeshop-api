@@ -1,0 +1,22 @@
+# En desarrollo, Docker solo levanta Postgres.
+# La app se corre con 'mvn spring-boot:run'. Dockerizar la app es la fase final.
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: perfumeshop-api_db
+    environment:
+      POSTGRES_DB: perfumeshop_db
+      POSTGRES_USER: perfume-api
+      POSTGRES_PASSWORD: perfume-api
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U perfume -d perfumeshop"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
