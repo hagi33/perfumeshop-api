@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 public record CreatePerfumeRequest(
         @NotBlank String name,
         @NotBlank String brand,
-        @Size(max = 1000) String description,
+        @Size(max = 250) String description,
         @NotNull OlfactoryFamily family,
         @NotNull Cocentration concentration,
         @NotNull Gender gender,
