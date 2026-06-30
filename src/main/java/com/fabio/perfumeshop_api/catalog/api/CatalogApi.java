@@ -14,7 +14,7 @@ public interface CatalogApi {
      * Devuelve Optional en vez de lanzar porque "no existe" es un resultado normal
      * para quien consulta, no un error
      * */
-    Optional<CatalogApi> findById(Long perfumeId);
+    Optional<CatalogItem> findById(Long perfumeId);
 
 
     /**
