@@ -13,7 +13,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U perfume -d perfumeshop"]
+      test: ["CMD-SHELL", "pg_isready -U perfume-api -d perfumeshop-api"]
       interval: 10s
       timeout: 5s
       retries: 5

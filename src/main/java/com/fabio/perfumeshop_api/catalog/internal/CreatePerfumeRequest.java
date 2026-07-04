@@ -4,7 +4,7 @@ import jakarta.validation.constraints.*;
 
 import java.math.BigDecimal;
 
-public record CreatePerfumeRequest(
+record CreatePerfumeRequest(
         @NotBlank String name,
         @NotBlank String brand,
         @Size(max = 250) String description,

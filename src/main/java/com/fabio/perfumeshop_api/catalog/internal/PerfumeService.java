@@ -20,6 +20,7 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 public class PerfumeService implements CatalogApi {
 
+    //Inyección de dependencias
     private final PerfumeRepository perfumeRepository;
     private final PerfumeMapper perfumeMapper;
     private final ApplicationEventPublisher events;
