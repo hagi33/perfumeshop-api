@@ -23,7 +23,7 @@ import java.math.BigDecimal;
 * */
 
 @Entity
-@Table(name = "Perfumes")
+@Table(name = "perfumes")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -66,6 +66,7 @@ class Perfume {
     @Column(nullable = false)
     private int stock;
 
+    @Column(name = "image_url")
     private String imageURL;
 
     /**
