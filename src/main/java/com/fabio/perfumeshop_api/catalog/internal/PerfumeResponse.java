@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 record PerfumeResponse(
         Long id, String name, String brand,
         String description, OlfactoryFamily family,
-        Cocentration cocentration, Gender gender,
-        Integer volumeM, BigDecimal price, int stock,
+        Concentration concentration, Gender gender,
+        Integer volumeMl, BigDecimal price, int stock,
         String imageUrl) {
 }

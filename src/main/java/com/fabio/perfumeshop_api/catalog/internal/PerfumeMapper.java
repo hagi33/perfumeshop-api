@@ -9,7 +9,7 @@ import org.mapstruct.MappingTarget;
 interface PerfumeMapper {
 
     //Con este método mapeamos la entidad al DTO público del paquete api
-    @Mapping(target = "avalibleStock", source = "stock")
+    @Mapping(target = "availableStock", source = "stock")
     CatalogItem toCatalogItem (Perfume perfume);
 
 

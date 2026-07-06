@@ -13,7 +13,7 @@ public record CatalogItem(
         Long id,
         String name,
         BigDecimal price,
-        int avalibleStock
+        int availableStock
 
 ) {
 }
