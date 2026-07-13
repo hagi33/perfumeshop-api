@@ -2,7 +2,6 @@ package com.fabio.perfumeshop_api;
 
 import com.fabio.perfumeshop_api.catalog.internal.*;
 import com.fabio.perfumeshop_api.shared.exception.ResourceNotFoundException;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
