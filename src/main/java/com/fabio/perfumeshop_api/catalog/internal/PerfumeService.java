@@ -52,14 +52,14 @@ public class PerfumeService implements CatalogApi {
 
     //--Operaciones HTTP para el controller--
 
-    List<PerfumeResponse> findAll(){
+    public List<PerfumeResponse> findAll(){
 
         return perfumeRepository.findAll().stream()
                 .map(perfumeMapper::toResponse).toList();
 
     }
 
-    PerfumeResponse getById(Long id){
+   public PerfumeResponse getById(Long id){
         return perfumeMapper.toResponse(getOrThrow(id));
     }
 
@@ -71,7 +71,7 @@ public class PerfumeService implements CatalogApi {
     }
 
     @Transactional
-    PerfumeResponse update(Long id, CreatePerfumeRequest request){
+    public PerfumeResponse update(Long id, CreatePerfumeRequest request){
         Perfume perfume = getOrThrow(id);
         perfumeMapper.updateEntity(perfume, request);
         return perfumeMapper.toResponse(perfume);
@@ -80,7 +80,7 @@ public class PerfumeService implements CatalogApi {
     }
 
     @Transactional
-    void delete(Long id){
+    public void delete(Long id){
         perfumeRepository.delete(getOrThrow(id));
     }
 

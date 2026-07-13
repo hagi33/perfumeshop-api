@@ -29,7 +29,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-class Perfume {
+public class Perfume {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

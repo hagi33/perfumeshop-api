@@ -6,7 +6,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
-interface PerfumeMapper {
+public interface PerfumeMapper {
 
     //Con este método mapeamos la entidad al DTO público del paquete api
     @Mapping(target = "availableStock", source = "stock")

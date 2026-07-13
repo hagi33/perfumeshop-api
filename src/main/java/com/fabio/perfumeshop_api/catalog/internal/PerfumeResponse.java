@@ -2,7 +2,7 @@ package com.fabio.perfumeshop_api.catalog.internal;
 
 import java.math.BigDecimal;
 
-record PerfumeResponse(
+public record PerfumeResponse(
         Long id, String name, String brand,
         String description, OlfactoryFamily family,
         Concentration concentration, Gender gender,
