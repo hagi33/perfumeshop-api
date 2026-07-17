@@ -18,7 +18,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class PerfumeService implements CatalogApi {
+ class PerfumeService implements CatalogApi {
 
     //Inyección de dependencias
     private final PerfumeRepository perfumeRepository;
