@@ -1,0 +1,51 @@
+package com.fabio.perfumeshop_api.order.internal;
+
+import com.fabio.perfumeshop_api.catalog.api.CatalogApi;
+import com.fabio.perfumeshop_api.user.api.UserApi;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@RequiredArgsConstructor
+@Transactional(readOnly = true)
+class CartService {
+
+    private final CartRepository cartRepository;
+    private final CatalogApi catalogApi; // para validar perfumes y consultar precio/stock
+    private final UserApi userApi; // para obtener el id del usuario autenticado
+
+
+    //Método que resuelve quien hace la petición
+    private Long getCurrentUserId(){
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        return userApi.findIdByEmail(email)
+                .orElseThrow(() -> new IllegalStateException("Usuario no encontrado"));
+
+    }
+
+    private Cart getOrCreateCart(Long userId){
+        return cartRepository.findUserById(userId)
+                .orElseGet(() -> cartRepository.save(
+                        Cart.builder().userId(userId).build()));
+
+
+
+
+    }
+
+    @Transactional
+    CartResponse addItem(Long perfumeId, int quantity){
+        Long userId= getCurrentUserId();
+
+        // 1. Validar que el perfume existe (vía CatalogApi, sin tocar catalog por dentro).
+        catalogApi.findById()
+
+    }
+
+
+
+
+
+}
