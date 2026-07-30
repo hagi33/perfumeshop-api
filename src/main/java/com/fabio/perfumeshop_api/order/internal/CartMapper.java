@@ -32,7 +32,7 @@ class CartMapper {
     }
 
 
-    //Posible método a cambiar en el futuro por posible falla en la escalabilidad
+    //Posible método a cambiar en el futuro por posible falla en la escalabilidad (problema N + 1)
     private CartItemResponse toItemResponse(CartItem item){
 
         //Consultamos catalog para obtener el nombre y precio actual del perfume
