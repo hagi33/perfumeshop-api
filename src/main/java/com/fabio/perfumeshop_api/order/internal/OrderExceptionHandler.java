@@ -23,4 +23,13 @@ class OrderExceptionHandler {
         problem.setTitle("Recurso no encontrado");
         return problem;
     }
+
+
+    @ExceptionHandler(EmptyCartException.class)
+    ProblemDetail emptyCart(EmptyCartException ex){
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
+                HttpStatus.BAD_REQUEST, ex.getMessage());
+        problemDetail.setTitle("Carrito vacío");
+        return problemDetail;
+    }
 }
