@@ -1,6 +1,7 @@
 package com.fabio.perfumeshop_api.order.internal;
 
 
+import ch.qos.logback.core.joran.conditional.IfAction;
 import com.fabio.perfumeshop_api.catalog.api.CatalogApi;
 import com.fabio.perfumeshop_api.catalog.api.CatalogItem;
 import com.fabio.perfumeshop_api.user.api.UserApi;
@@ -11,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -91,6 +93,49 @@ class OrderService {
 
 
     }
+
+
+    @Transactional
+    OrderResponse pay(Long orderId){
+
+        Long userId = getCurrentUserId();
+
+        //Buscamos el pedido y lanzamos una excepción si no existe
+        Order order = orderRepository.findById(orderId).orElseThrow(
+                () -> new ResourceNotFoundException("Pedido no encontrado: " + orderId)
+        );
+
+
+        //Comprobamos que el pedido es el del usuario
+        if (!order.getUserId().equals(userId)){
+            throw new ResourceNotFoundException("Pedido no encontrado: " + orderId);
+        }
+
+        //Comprobamos el estado del  order
+        if (order.getStatus() != OrderStatus.PENDING) {
+            throw new InvalidOrderStateException("El pedido no está pendiente de pago, " +
+                    "extado actual : " + order.getStatus());
+        }
+
+        //Si ha pasado los filtros cambiamos el estado a paid
+        order.setStatus(OrderStatus.PAID);
+
+        Order saved = orderRepository.save(order);
+        return orderMapper.toResponse(saved);
+
+    }
+
+    List<OrderResponse> getUserOrders(){
+        Long userId = getCurrentUserId();
+
+        return orderRepository.findByUserId(userId).stream()
+                .map(orderMapper::toResponse)
+                .toList();
+    }
+
+
+
+
 
 
 
