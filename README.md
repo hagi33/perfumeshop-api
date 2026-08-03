@@ -1,7 +1,3 @@
-# perfumeshop-api
-
-
-#TODO: Tests unitarios y de integración.
 # PerfumeShop API
 
 API REST de comercio electrónico para una tienda de fragancias, construida como monolito modular con Spring Boot 4 y Java 21.
