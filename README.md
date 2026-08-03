@@ -13,7 +13,104 @@ API REST de comercio electrónico para una tienda de fragancias, construida como
 
 ## Arquitectura
 
-Monolito modular organizado en tres módulos (`catalog`, `user`, `order`), cada uno con un paquete `api/` público y un paquete `internal/` privado. Las clases internas son package-private, de modo que los módulos solo se comunican a través de sus interfaces públicas. Las referencias entre módulos se guardan como identificadores simples, sin relaciones JPA ni claves foráneas que crucen las fronteras.
+Monolito modular: una sola aplicación desplegable, dividida internamente en tres módulos de negocio (`catalog`, `user`, `order`) más dos paquetes de soporte (`config`, `shared`). Cada módulo separa su **API pública** (`api/`) de su **implementación** (`internal/`).
+
+### Estructura de paquetes
+
+```
+com.fabio.perfumeshop_api
+│
+├── catalog/
+│   ├── api/
+│   │   ├── CatalogApi                 Interfaz pública del módulo
+│   │   ├── CatalogItem                DTO expuesto a otros módulos
+│   │   └── InsufficientStockException
+│   └── internal/
+│       ├── Perfume                    Entidad JPA
+│       ├── PerfumeRepository
+│       ├── PerfumeService             Implementa CatalogApi
+│       ├── PerfumeController          /api/perfumes
+│       ├── PerfumeMapper
+│       ├── CreatePerfumeRequest / PerfumeResponse
+│       └── CatalogExceptionHandler
+│
+├── user/
+│   ├── api/
+│   │   └── UserApi                    Interfaz pública del módulo
+│   └── internal/
+│       ├── User                       Entidad JPA
+│       ├── Role                       Enum (USER, ADMIN)
+│       ├── UserRepository
+│       ├── AuthService                Registro y login
+│       ├── UserService                Implementa UserApi
+│       ├── AuthController             /api/auth
+│       ├── JwtService                 Genera y valida tokens
+│       ├── JwtAuthFilter              Intercepta cada petición
+│       ├── AppUserDetailsService
+│       ├── PasswordConfig             Bean BCrypt
+│       └── UserExceptionHandler
+│
+├── order/
+│   └── internal/
+│       ├── Cart / CartItem            Entidades del carrito
+│       ├── Order / OrderItem          Entidades del pedido
+│       ├── OrderStatus                Enum (PENDING, PAID, CANCELLED)
+│       ├── CartRepository / OrderRepository
+│       ├── CartService               Lógica del carrito
+│       ├── OrderService              Checkout, pago, historial
+│       ├── CartController            /api/cart
+│       ├── OrderController           /api/orders
+│       ├── CartMapper / OrderMapper
+│       └── OrderExceptionHandler
+│
+├── config/
+│   └── SecurityConfig                Cadena de filtros y reglas de acceso
+│
+└── shared/
+    └── GlobalExceptionHandler        Validación + catch-all
+```
+
+Las clases de cada `internal/` son **package-private**: el compilador de Java impide que un módulo acceda a las tripas de otro. Solo lo declarado en `api/` es visible desde fuera.
+
+### Comunicación entre módulos
+
+Los módulos se comunican **exclusivamente** a través de las interfaces públicas del paquete `api/`. El módulo `order` depende de `CatalogApi` y `UserApi`, pero nunca de sus implementaciones concretas ni de sus entidades.
+
+```mermaid
+graph LR
+    subgraph order["order"]
+        CS[CartService]
+        OS[OrderService]
+    end
+
+    subgraph catalog["catalog"]
+        CA["CatalogApi<br/>(api)"]
+        PS["PerfumeService<br/>(internal)"]
+        CA -.implementa.- PS
+    end
+
+    subgraph user["user"]
+        UA["UserApi<br/>(api)"]
+        US["UserService<br/>(internal)"]
+        UA -.implementa.- US
+    end
+
+    CS -->|findById| CA
+    CS -->|findIdByEmail| UA
+    OS -->|findById<br/>decreaseStock| CA
+    OS -->|findIdByEmail| UA
+
+    style CA fill:#2d6a4f,color:#fff
+    style UA fill:#2d6a4f,color:#fff
+    style PS fill:#40404a,color:#fff
+    style US fill:#40404a,color:#fff
+```
+
+Además, **ninguna relación JPA cruza las fronteras entre módulos**: las referencias se guardan como identificadores simples (`Long`), no como relaciones `@ManyToOne`. Por eso `cart_items.perfume_id` no tiene clave foránea hacia `perfumes` — la integridad la garantiza el código validando contra `CatalogApi`, no la base de datos. Esto mantiene los módulos desacoplados también a nivel de persistencia.
+
+### Capas dentro de cada módulo
+
+Cada módulo sigue el mismo patrón por capas: el **controller** traduce HTTP y delega; el **service** contiene la lógica de negocio y las transacciones; el **repository** habla con la base de datos; los **mappers** convierten entre entidades y DTOs. La lógica nunca vive en el controller.
 
 ## Módulos
 
@@ -59,7 +156,7 @@ UPDATE users SET role = 'ADMIN' WHERE email = 'tu@email.com';
 - `BigDecimal` para el dinero.
 - Flyway es dueño del esquema; Hibernate solo valida.
 - Los pedidos congelan nombre y precio en el momento de la compra (registro histórico inmutable).
-- Errores con `ProblemDetail` (RFC 7807).
+- Errores con `ProblemDetail` (RFC 7807); cada módulo maneja sus excepciones.
 
 ## Estado
 
