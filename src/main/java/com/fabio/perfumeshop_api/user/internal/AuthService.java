@@ -1,5 +1,7 @@
 package com.fabio.perfumeshop_api.user.internal;
 
+import com.fabio.perfumeshop_api.user.internal.exception.EmailAlreadyExistsException;
+import com.fabio.perfumeshop_api.user.internal.exception.InvalidCredentialsException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

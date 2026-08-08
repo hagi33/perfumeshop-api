@@ -1,4 +1,4 @@
-package com.fabio.perfumeshop_api.user.internal;
+package com.fabio.perfumeshop_api.user.internal.exception;
 
 public class InvalidCredentialsException extends RuntimeException {
      InvalidCredentialsException()

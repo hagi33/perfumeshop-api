@@ -1,6 +1,8 @@
-package com.fabio.perfumeshop_api.order.internal;
+package com.fabio.perfumeshop_api.order.internal.order;
 
 
+import com.fabio.perfumeshop_api.order.internal.order.dto.OrderItemResponse;
+import com.fabio.perfumeshop_api.order.internal.order.dto.OrderResponse;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;

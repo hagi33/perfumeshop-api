@@ -1,4 +1,6 @@
-package com.fabio.perfumeshop_api.order.internal;
+package com.fabio.perfumeshop_api.order.internal.order.dto;
+
+import com.fabio.perfumeshop_api.order.internal.order.OrderStatus;
 
 import java.math.BigDecimal;
 import java.time.Instant;

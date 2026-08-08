@@ -1,6 +1,10 @@
-package com.fabio.perfumeshop_api.order.internal;
+package com.fabio.perfumeshop_api.order.internal.cart;
 
 
+import com.fabio.perfumeshop_api.order.internal.CartService;
+import com.fabio.perfumeshop_api.order.internal.cart.dto.AddItemRequest;
+import com.fabio.perfumeshop_api.order.internal.cart.dto.CartResponse;
+import com.fabio.perfumeshop_api.order.internal.cart.dto.UpdateItemRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

@@ -1,4 +1,4 @@
-package com.fabio.perfumeshop_api.order.internal;
+package com.fabio.perfumeshop_api.order.internal.exception;
 
 /**
  * Se lanza cuando el módulo order no encuentra un recurso que se esperaba

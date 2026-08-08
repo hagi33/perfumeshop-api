@@ -1,8 +1,11 @@
-package com.fabio.perfumeshop_api.order.internal;
+package com.fabio.perfumeshop_api.order.internal.cart;
 
 
 import com.fabio.perfumeshop_api.catalog.api.CatalogApi;
 import com.fabio.perfumeshop_api.catalog.api.CatalogItem;
+import com.fabio.perfumeshop_api.order.internal.cart.dto.CartItemResponse;
+import com.fabio.perfumeshop_api.order.internal.cart.dto.CartResponse;
+import com.fabio.perfumeshop_api.order.internal.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

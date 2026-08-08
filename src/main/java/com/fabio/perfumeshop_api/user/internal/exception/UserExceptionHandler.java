@@ -1,4 +1,4 @@
-package com.fabio.perfumeshop_api.user.internal;
+package com.fabio.perfumeshop_api.user.internal.exception;
 
 
 import org.springframework.http.HttpStatus;
@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
-class UserExceptionHandler {
+public class UserExceptionHandler {
 
     @ExceptionHandler(InvalidCredentialsException.class)
     ProblemDetail handleinvalidCredentials(InvalidCredentialsException ex){

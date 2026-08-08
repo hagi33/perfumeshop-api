@@ -1,4 +1,4 @@
-package com.fabio.perfumeshop_api.user.internal;
+package com.fabio.perfumeshop_api.user.internal.exception;
 
 public class EmailAlreadyExistsException extends RuntimeException {
     public EmailAlreadyExistsException(String email) {

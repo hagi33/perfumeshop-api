@@ -1,6 +1,8 @@
-package com.fabio.perfumeshop_api.order.internal;
+package com.fabio.perfumeshop_api.order.internal.order;
 
 
+import com.fabio.perfumeshop_api.order.internal.OrderService;
+import com.fabio.perfumeshop_api.order.internal.order.dto.OrderResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;

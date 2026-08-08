@@ -1,4 +1,4 @@
-package com.fabio.perfumeshop_api.order.internal;
+package com.fabio.perfumeshop_api.order.internal.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;

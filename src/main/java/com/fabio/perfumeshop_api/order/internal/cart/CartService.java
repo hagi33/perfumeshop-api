@@ -1,6 +1,9 @@
-package com.fabio.perfumeshop_api.order.internal;
+package com.fabio.perfumeshop_api.order.internal.cart;
 
 import com.fabio.perfumeshop_api.catalog.api.CatalogApi;
+import com.fabio.perfumeshop_api.order.internal.CartMapper;
+import com.fabio.perfumeshop_api.order.internal.cart.dto.CartResponse;
+import com.fabio.perfumeshop_api.order.internal.exception.ResourceNotFoundException;
 import com.fabio.perfumeshop_api.user.api.UserApi;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
