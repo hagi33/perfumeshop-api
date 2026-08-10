@@ -1,4 +1,4 @@
-package com.fabio.perfumeshop_api.user.internal;
+package com.fabio.perfumeshop_api.user.internal.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

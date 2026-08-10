@@ -1,6 +1,7 @@
-package com.fabio.perfumeshop_api.user.internal;
+package com.fabio.perfumeshop_api.user.internal.config;
 
 
+import com.fabio.perfumeshop_api.user.internal.auth.JwtAuthFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

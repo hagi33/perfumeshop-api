@@ -67,7 +67,7 @@ class Perfume {
     private int stock;
 
     @Column(name = "image_url")
-    private String imageURL;
+    private String imageUrl;
 
     /**
      * Descuenta unidades protegiendo la invariante de stock no negativo.

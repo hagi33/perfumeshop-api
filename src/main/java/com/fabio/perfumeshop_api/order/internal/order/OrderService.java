@@ -1,10 +1,8 @@
 package com.fabio.perfumeshop_api.order.internal.order;
 
-
+import com.fabio.perfumeshop_api.order.internal.order.OrderItem;
 import com.fabio.perfumeshop_api.catalog.api.CatalogApi;
 import com.fabio.perfumeshop_api.catalog.api.CatalogItem;
-import com.fabio.perfumeshop_api.order.internal.OrderMapper;
-import com.fabio.perfumeshop_api.order.internal.OrderRepository;
 import com.fabio.perfumeshop_api.order.internal.cart.Cart;
 import com.fabio.perfumeshop_api.order.internal.cart.CartItem;
 import com.fabio.perfumeshop_api.order.internal.cart.CartRepository;

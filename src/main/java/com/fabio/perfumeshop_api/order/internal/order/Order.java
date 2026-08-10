@@ -1,7 +1,6 @@
 package com.fabio.perfumeshop_api.order.internal.order;
 
 
-import com.fabio.perfumeshop_api.order.internal.OrderItem;
 import jakarta.persistence.*;
 import lombok.*;
 

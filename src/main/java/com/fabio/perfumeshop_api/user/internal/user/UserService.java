@@ -1,4 +1,4 @@
-package com.fabio.perfumeshop_api.user.internal;
+package com.fabio.perfumeshop_api.user.internal.user;
 
 
 import com.fabio.perfumeshop_api.user.api.UserApi;

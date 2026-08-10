@@ -1,6 +1,8 @@
-package com.fabio.perfumeshop_api.user.internal;
+package com.fabio.perfumeshop_api.user.internal.auth;
 
 
+import com.fabio.perfumeshop_api.user.internal.user.User;
+import com.fabio.perfumeshop_api.user.internal.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

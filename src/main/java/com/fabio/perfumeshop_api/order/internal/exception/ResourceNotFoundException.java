@@ -8,8 +8,8 @@ package com.fabio.perfumeshop_api.order.internal.exception;
  * y respetamos la frontera modular (cada módulo maneja sus propias excepciones,
  * igual que catalog y user).
  */
-class ResourceNotFoundException extends RuntimeException {
-    ResourceNotFoundException(String message) {
+public class ResourceNotFoundException extends RuntimeException {
+    public ResourceNotFoundException(String message) {
         super(message);
     }
 }

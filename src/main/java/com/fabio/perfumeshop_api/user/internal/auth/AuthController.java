@@ -1,6 +1,9 @@
-package com.fabio.perfumeshop_api.user.internal;
+package com.fabio.perfumeshop_api.user.internal.auth;
 
 
+import com.fabio.perfumeshop_api.user.internal.auth.dto.LoginRequest;
+import com.fabio.perfumeshop_api.user.internal.auth.dto.RegisterRequest;
+import com.fabio.perfumeshop_api.user.internal.auth.dto.AuthResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

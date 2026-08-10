@@ -1,8 +1,8 @@
-package com.fabio.perfumeshop_api.user.internal;
+package com.fabio.perfumeshop_api.user.internal.auth.dto;
 
 import jakarta.validation.constraints.NotBlank;
 
-record LoginRequest(
+public record LoginRequest(
         @NotBlank String email,
         @NotBlank String password
 

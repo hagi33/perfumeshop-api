@@ -1,5 +1,9 @@
-package com.fabio.perfumeshop_api.user.internal;
+package com.fabio.perfumeshop_api.user.internal.auth;
 
+import com.fabio.perfumeshop_api.user.internal.user.*;
+import com.fabio.perfumeshop_api.user.internal.auth.dto.AuthResponse;
+import com.fabio.perfumeshop_api.user.internal.auth.dto.LoginRequest;
+import com.fabio.perfumeshop_api.user.internal.auth.dto.RegisterRequest;
 import com.fabio.perfumeshop_api.user.internal.exception.EmailAlreadyExistsException;
 import com.fabio.perfumeshop_api.user.internal.exception.InvalidCredentialsException;
 import lombok.RequiredArgsConstructor;
