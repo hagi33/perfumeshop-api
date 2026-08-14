@@ -164,4 +164,15 @@ UPDATE users SET role = 'ADMIN' WHERE email = 'tu@email.com';
 
 ## Estado
 
-**Implementado:** catálogo, usuarios y pedidos completos; frontend Angular en desarrollo aparte. **Pendiente:** tests, despliegue, pulido menor y poner fotos reales de los perfumes.
+**Implementado:** catálogo, usuarios y pedidos completos; frontend Angular en desarrollo aparte. 
+
+## Pendiente / TODO
+- **Imágenes reales de producto.** Ahora mismo `image_url` apunta a fotos
+  genéricas de Unsplash (frascos ilustrativos, no los perfumes reales).
+  Sustituir por las imágenes reales de cada perfume. Opciones evaluadas:
+  URLs de tienda (rápido, zona gris legal) o subir a S3 (correcto, +
+  práctica AWS SAA-C03). Preferible S3.
+- Tests (backend).
+- Despliegue.
+- Taxonomía de excepciones: `PerfumeService` y el mapeo de excepciones de
+  dominio a códigos HTTP correctos (algunos 404 caen como 500).
