@@ -164,4 +164,4 @@ UPDATE users SET role = 'ADMIN' WHERE email = 'tu@email.com';
 
 ## Estado
 
-**Implementado:** catálogo, usuarios y pedidos completos; frontend Angular en desarrollo aparte. **Pendiente:** tests, despliegue y pulido menor.
+**Implementado:** catálogo, usuarios y pedidos completos; frontend Angular en desarrollo aparte. **Pendiente:** tests, despliegue, pulido menor y poner fotos reales de los perfumes.
