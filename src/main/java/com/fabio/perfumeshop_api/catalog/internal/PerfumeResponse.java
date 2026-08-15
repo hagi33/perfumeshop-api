@@ -7,5 +7,5 @@ record PerfumeResponse(
         String description, OlfactoryFamily family,
         Concentration concentration, Gender gender,
         Integer volumeMl, BigDecimal price, int stock,
-        String imageUrl) {
+        String imageUrl, FragrancePyramidResponse pyramid) {
 }

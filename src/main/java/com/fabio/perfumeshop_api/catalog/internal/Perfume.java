@@ -10,14 +10,12 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 
 
 /**
- * Entidad de persistencia de un perfume. package-private: ninguna clase fuera
- * de catalog.internal puede importarla. Es la barrera física que el compilador
- * impone, complementaria a la verificación de Spring Modulith.
- *
  * La lógica de stock vive aquí, pegada al dato que protege: un Perfume no
  * puede quedar con stock negativo, lo manipule quien lo manipule.
 * */
@@ -68,6 +66,11 @@ class Perfume {
 
     @Column(name = "image_url")
     private String imageUrl;
+
+    @OneToMany(mappedBy = "perfume")
+    @OrderBy("id")
+    @Builder.Default
+    private List<PerfumeNote> notes = new ArrayList<>();
 
     /**
      * Descuenta unidades protegiendo la invariante de stock no negativo.

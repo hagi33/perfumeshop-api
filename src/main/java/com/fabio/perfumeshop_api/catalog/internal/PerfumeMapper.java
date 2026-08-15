@@ -5,6 +5,10 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 @Mapper(componentModel = "spring")
 interface PerfumeMapper {
 
@@ -17,7 +21,32 @@ interface PerfumeMapper {
      * Convierte una entidad en el DTO de salid.
      * Se usa cada vez que se devuelve la petición de un perfume al cliente
     * */
+    @Mapping(target = "pyramid", ignore = true)
     PerfumeResponse toResponse (Perfume perfume);
+
+    /**
+     * Igual que toResponse, pero además puebla la pirámide olfativa a partir
+     * de la colección notes. Se usa solo en getById: findAll no la toca para
+     * no disparar la carga perezosa de notes en cada fila del listado.
+    * */
+    @Mapping(target = "pyramid", source = "notes")
+    PerfumeResponse toDetailResponse (Perfume perfume);
+
+    /**
+     * Agrupa la lista plana de PerfumeNote en top/heart/base. Vive aquí como
+     * default method porque MapStruct no genera solo este agrupamiento por
+     * nivel a partir de una FK de enum.
+    * */
+    default FragrancePyramidResponse toPyramid(List<PerfumeNote> notes) {
+        Map<PyramidLevel, List<String>> byLevel = notes.stream()
+                .collect(Collectors.groupingBy(PerfumeNote::getLevel,
+                        Collectors.mapping(pn -> pn.getNote().getName(), Collectors.toList())));
+
+        return new FragrancePyramidResponse(
+                byLevel.getOrDefault(PyramidLevel.TOP, List.of()),
+                byLevel.getOrDefault(PyramidLevel.HEART, List.of()),
+                byLevel.getOrDefault(PyramidLevel.BASE, List.of()));
+    }
 
 
     /**

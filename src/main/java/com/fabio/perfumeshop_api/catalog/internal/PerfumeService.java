@@ -60,7 +60,7 @@ import java.util.Optional;
     }
 
    public PerfumeResponse getById(Long id){
-        return perfumeMapper.toResponse(getOrThrow(id));
+        return perfumeMapper.toDetailResponse(getOrThrow(id));
     }
 
     @Transactional
