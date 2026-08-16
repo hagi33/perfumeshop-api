@@ -12,6 +12,7 @@ import com.fabio.perfumeshop_api.order.internal.exception.ResourceNotFoundExcept
 import com.fabio.perfumeshop_api.order.internal.order.dto.OrderResponse;
 import com.fabio.perfumeshop_api.user.api.UserApi;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +31,7 @@ class OrderService {
     private final CatalogApi catalogApi;
     private final UserApi userApi;
     private final OrderMapper orderMapper;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     private Long getCurrentUserId(){
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -37,6 +39,15 @@ class OrderService {
                 .orElseThrow(() -> new IllegalStateException("Usuario no encontrado"));
 
     }
+
+    //Método para conseguir el email, que se usará para enviar emails una vez pagado el pedido.
+    private String getCurrentUserEmail(){
+        return SecurityContextHolder.getContext().getAuthentication().getName();
+    }
+
+
+
+
 
 
     @Transactional
@@ -125,8 +136,27 @@ class OrderService {
 
         //Si ha pasado los filtros cambiamos el estado a paid
         order.setStatus(OrderStatus.PAID);
-
         Order saved = orderRepository.save(order);
+
+        //Construimos la foto inmutable del pedido para el evento, dentro de la transacción, donde la coleccion lazy items sí se puede leer.
+        List<OrderPaidEvent.Item> eventItems = saved.getItems().stream()
+                .map(item -> new OrderPaidEvent.Item(
+                        item.getPerfumeName(),
+                        item.getQuantity(),
+                        item.getUnitPrice()
+                )).toList();
+
+
+        OrderPaidEvent event = new OrderPaidEvent(
+                saved.getId(),
+                getCurrentUserEmail(),
+                saved.getCreatedAt(),
+                saved.getTotal(),
+                eventItems
+        );
+
+        applicationEventPublisher.publishEvent(event);
+
         return orderMapper.toResponse(saved);
 
     }

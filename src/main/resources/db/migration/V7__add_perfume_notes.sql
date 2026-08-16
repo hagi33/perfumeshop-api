@@ -23,7 +23,7 @@ INSERT INTO notes (name) VALUES
     ('Oud'), ('Sándalo'), ('Cedro'), ('Vetiver'), ('Pachulí'),
     ('Ámbar'), ('Vainilla'), ('Almizcle'), ('Benjuí'), ('Haba tonka'),
     ('Cuero'), ('Tabaco'), ('Frutos secos'), ('Almizcle blanco'), ('Miel'),
-    ('Incienso'), ('Musgo de roble'), ('Geranio'), ('Pimienta negra'), ('Coco');
+    ('Incienso'), ('Musgo de roble'), ('Geranio'), ('Pimienta negra'), ('Coco'), ('Ládano');
 
 -- 2. Perfumes originales (V2)
 
@@ -99,8 +99,8 @@ INSERT INTO perfume_notes (perfume_id, note_id, level)
 SELECT p.id, n.id, v.level
 FROM perfumes p
 JOIN (VALUES
-    ('Naranja', 'TOP'), ('Azafrán', 'TOP'),
-    ('Benjuí', 'HEART'), ('Rosa', 'HEART'),
+    ('Naranja', 'TOP'), ('Ládano', 'TOP'),
+    ('Benjuí', 'HEART'), ('Lavanda', 'HEART'),
     ('Vainilla', 'BASE'), ('Ámbar', 'BASE')
 ) AS v(note, level) ON true
 JOIN notes n ON n.name = v.note

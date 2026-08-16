@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body style="font-family: Arial, sans-serif; color: #2b2b2b; background:#faf7f2; padding:24px;">
+<div style="max-width:600px; margin:0 auto; background:#ffffff; padding:32px; border-radius:8px;">
+
+    <h1 style="font-size:22px; margin:0 0 8px;">Gracias por tu compra</h1>
+    <p style="color:#666; margin:0 0 24px;">
+        Tu pedido <strong>#<span th:text="${orderId}">0</span></strong> ha sido confirmado.
+    </p>
+
+    <table style="width:100%; border-collapse:collapse; margin-bottom:24px;">
+        <thead>
+        <tr style="border-bottom:2px solid #e0d8cc; text-align:left;">
+            <th style="padding:8px 4px;">Perfume</th>
+            <th style="padding:8px 4px; text-align:center;">Cantidad</th>
+            <th style="padding:8px 4px; text-align:right;">Precio</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="item : ${items}" style="border-bottom:1px solid #f0ebe3;">
+            <td style="padding:8px 4px;" th:text="${item.perfumeName()}">Perfume</td>
+            <td style="padding:8px 4px; text-align:center;" th:text="${item.quantity()}">1</td>
+            <td style="padding:8px 4px; text-align:right;"
+                th:text="${#numbers.formatDecimal(item.unitPrice(), 1, 2)} + ' €'">0,00 €</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <p style="text-align:right; font-size:18px; margin:0;">
+        Total: <strong th:text="${#numbers.formatDecimal(total, 1, 2)} + ' €'">0,00 €</strong>
+    </p>
+
+    <p style="color:#999; font-size:13px; margin-top:32px;">
+        PerfumeShop · Este es un correo automático, no respondas a este mensaje.
+    </p>
+</div>
+</body>
+</html>
