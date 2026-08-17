@@ -2,7 +2,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/${DB_NAME:perfumeshop-api}
     username: ${DB_USER:perfume-api}
-    password: ${DB_PASSWORD:perfume-api}
+    password: ${DB_PASSWORD:SECRET}
 
   jpa:
     hibernate:

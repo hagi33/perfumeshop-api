@@ -1,6 +1,5 @@
 package com.fabio.perfumeshop_api.order.internal.order;
 
-import com.fabio.perfumeshop_api.order.internal.order.OrderItem;
 import com.fabio.perfumeshop_api.catalog.api.CatalogApi;
 import com.fabio.perfumeshop_api.catalog.api.CatalogItem;
 import com.fabio.perfumeshop_api.order.internal.cart.Cart;
@@ -9,6 +8,7 @@ import com.fabio.perfumeshop_api.order.internal.cart.CartRepository;
 import com.fabio.perfumeshop_api.order.internal.exception.EmptyCartException;
 import com.fabio.perfumeshop_api.order.internal.exception.InvalidOrderStateException;
 import com.fabio.perfumeshop_api.order.internal.exception.ResourceNotFoundException;
+import com.fabio.perfumeshop_api.order.internal.order.dto.OrderPaidEvent;
 import com.fabio.perfumeshop_api.order.internal.order.dto.OrderResponse;
 import com.fabio.perfumeshop_api.user.api.UserApi;
 import lombok.RequiredArgsConstructor;

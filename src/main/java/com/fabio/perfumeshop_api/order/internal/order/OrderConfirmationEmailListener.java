@@ -1,7 +1,8 @@
 package com.fabio.perfumeshop_api.order.internal.order;
 
 
-import jakarta.mail.MessagingException;   // ojo: es jakarta.mail
+import com.fabio.perfumeshop_api.order.internal.order.dto.OrderPaidEvent;
+import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,8 +13,6 @@ import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
-
-import java.util.logging.Logger;
 
 
 @Slf4j
