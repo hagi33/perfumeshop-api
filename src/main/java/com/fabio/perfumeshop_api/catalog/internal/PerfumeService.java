@@ -50,6 +50,20 @@ import java.util.Optional;
         ));
     }
 
+    @Override
+    public List<CatalogItemRecommendation> findAllForRecommendation() {
+        return perfumeRepository.findAll().stream()
+                .map(perfume -> new CatalogItemRecommendation(
+                        perfume.getId(),
+                        perfume.getName(),
+                        perfume.getBrand(),
+                        perfume.getFamily().name(),     //conseguimos el valor String del enum en esta línea.
+                        perfume.getNotes().stream()     // Creamos un List<PerfumeNote>
+                                .map(perfumeNote -> perfumeNote.getNote().getName()).toList() //Cogemos el nombre de cada nota
+                ))
+                .toList();
+    }
+
     //--Operaciones HTTP para el controller--
 
     public List<PerfumeResponse> findAll(){

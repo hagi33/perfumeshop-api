@@ -1,7 +1,9 @@
 package com.fabio.perfumeshop_api.catalog.api;
 
 
+import java.util.List;
 import java.util.Optional;
+import com.fabio.perfumeshop_api.catalog.internal.CatalogItemRecommendation;
 
 /**
  * Punto de entrada del módulo catalog para el resto de la aplicación.
@@ -24,5 +26,10 @@ public interface CatalogApi {
     void decreaseStock(Long perfumeId, int quantity);
 
 
+    /*
+    * Lista completa de perfumes con datos ricos para recomendación (chat).
+    * Devuelve nombre, marca, familia y notas de cada perfume.
+    * */
+    List<CatalogItemRecommendation> findAllForRecommendation();
 
 }
