@@ -1,178 +1,103 @@
 # PerfumeShop API
 
-API REST de comercio electrónico para una tienda de fragancias, construida como **monolito modular** con Spring Boot 4 y Java 21.
+**English** · [Español](README.es.md)
 
-## Stack tecnológico
+E-commerce REST API for a fragrance shop, built as a **modular monolith** with Spring Boot 4 and Java 21. Backend for the PerfumeShop project ([Angular frontend here](https://github.com/hagi33/perfumeshop-web)).
 
-- **Java 21** + **Spring Boot 4.0.7** (Spring Security 7)
-- **PostgreSQL** con **Flyway** para migraciones
+## Tech stack
+
+- **Java 21** · **Spring Boot 4** (Spring Security 7)
+- **PostgreSQL** with **Flyway** migrations
 - **Spring Data JPA**, **MapStruct**, **Lombok**
-- **JWT** (jjwt 0.12.6) para autenticación
+- **JWT** authentication (jjwt)
+- **Thymeleaf** for transactional email templates
+- **Anthropic Java SDK** for the AI assistant
 - **springdoc-openapi** (Swagger UI)
-- **Maven**
+- Maven
 
-## Arquitectura
+## Architecture
 
-Monolito modular: una sola aplicación desplegable, dividida internamente en tres módulos de negocio (`catalog`, `user`, `order`) más un paquete de soporte transversal (`shared`). Cada módulo separa su **API pública** (`api/`) de su **implementación** (`internal/`).
+A single deployable application, split internally into business modules — `catalog`, `user`, `order`, `chat` — plus a cross-cutting `shared` package. Each module exposes a narrow public boundary (`api/`) and hides its implementation (`internal/`).
 
-Dentro de `internal/`, los módulos que han crecido se subdividen en subpaquetes por área funcional (por ejemplo `order` separa `cart/` y `order/`, y `user` separa `auth/`, `user/` y `config/`), cada uno con su propio `dto/` y `exception/` cuando lo necesita. Así ningún paquete se convierte en un cajón de sastre y cada archivo vive junto a los que comparten su responsabilidad.
+The design follows a few deliberate rules:
 
-### Estructura de paquetes
+- **Enforced module boundaries.** Classes under `internal/` are package-private wherever possible, so the compiler itself prevents one module from reaching into another's internals. Only what a module publishes in `api/` is visible from outside.
+- **Modules talk through interfaces, never entities.** `order` and `chat` depend on `CatalogApi`, not on the `Perfume` entity. No JPA relationship crosses a module boundary — cross-module references are stored as plain `Long` ids, and integrity is enforced in code (validating against `CatalogApi`) rather than by foreign keys.
+- **A domain event as an extension point.** `catalog` publishes a `StockDecreasedEvent`, and `order` publishes an `OrderPaidEvent` that triggers the confirmation email — decoupling side effects from the core transaction.
+- **Subpackages by area.** Modules that grew (like `order`, split into `cart/` and `order/`) are subdivided so no package becomes a dumping ground.
+
+### Module structure
 
 ```
 com.fabio.perfumeshop_api
-│
-├── catalog/
-│   ├── api/                            Frontera pública del módulo
-│   │   ├── CatalogApi                  Interfaz (findById, decreaseStock)
-│   │   ├── CatalogItem                 DTO expuesto a otros módulos
-│   │   ├── InsufficientStockException
-│   │   └── StockDecreasedEvent         Evento de dominio (stock disminuido)
-│   └── internal/
-│       ├── Perfume                     Entidad JPA
-│       ├── PerfumeRepository
-│       ├── PerfumeService              Implementa CatalogApi
-│       ├── PerfumeController           /api/perfumes
-│       ├── PerfumeMapper
-│       ├── CreatePerfumeRequest / PerfumeResponse
-│       ├── Concentration / Gender / OlfactoryFamily   Enums del dominio
-│       └── exception/
-│           ├── CatalogExceptionHandler
-│           └── ResourceNotFoundException
-│
-├── user/
-│   ├── api/
-│   │   └── UserApi                     Interfaz pública (findIdByEmail)
-│   └── internal/
-│       ├── auth/                       Autenticación y seguridad
-│       │   ├── AuthController          /api/auth
-│       │   ├── AuthService             Registro y login
-│       │   ├── JwtService              Genera y valida tokens
-│       │   ├── JwtAuthFilter           Intercepta cada petición
-│       │   ├── AppUserDetailsService
-│       │   └── dto/
-│       │       ├── AuthResponse
-│       │       ├── LoginRequest
-│       │       └── RegisterRequest
-│       ├── user/                       Dominio usuario
-│       │   ├── User                    Entidad JPA
-│       │   ├── Role                    Enum (USER, ADMIN)
-│       │   ├── UserRepository
-│       │   └── UserService             Implementa UserApi
-│       ├── config/                     Configuración
-│       │   ├── SecurityConfig          Cadena de filtros y reglas de acceso
-│       │   ├── PasswordConfig          Bean BCrypt
-│       │   └── OpenApiConfig           Configuración de Swagger
-│       └── exception/
-│           ├── UserExceptionHandler
-│           ├── EmailAlreadyExistsException
-│           └── InvalidCredentialsException
-│
-├── order/
-│   └── internal/
-│       ├── cart/                       Carrito de compra
-│       │   ├── Cart / CartItem         Entidades
-│       │   ├── CartRepository
-│       │   ├── CartService             Lógica del carrito
-│       │   ├── CartController          /api/cart
-│       │   ├── CartMapper
-│       │   └── dto/
-│       │       ├── AddItemRequest / UpdateItemRequest
-│       │       └── CartResponse / CartItemResponse
-│       ├── order/                      Pedidos
-│       │   ├── Order / OrderItem       Entidades
-│       │   ├── OrderStatus             Enum (PENDING, PAID, CANCELLED)
-│       │   ├── OrderRepository
-│       │   ├── OrderService            Checkout, pago, historial
-│       │   ├── OrderController         /api/orders
-│       │   ├── OrderMapper
-│       │   └── dto/
-│       │       └── OrderResponse / OrderItemResponse
-│       └── exception/
-│           ├── OrderExceptionHandler
-│           ├── EmptyCartException
-│           ├── InvalidOrderStateException
-│           └── ResourceNotFoundException
-│
-└── shared/
-    └── exception/
-        └── GlobalExceptionHandler      Validación + catch-all
+├── catalog/     Perfume catalog, olfactory notes (fragrance pyramid)
+│   ├── api/         CatalogApi, CatalogItem, CatalogRecommendationItem,
+│   │                StockDecreasedEvent, InsufficientStockException
+│   └── internal/    Perfume, Note, PerfumeNote, services, controller, mapper
+├── user/        Registration, JWT login, roles (USER / ADMIN)
+│   ├── api/         UserApi
+│   └── internal/    auth/ (JWT, filter, security) · user/ (domain) · config/
+├── order/       Cart, transactional checkout, simulated payment, history
+│   └── internal/    cart/ · order/ · exception/
+├── chat/        AI shopping assistant (Anthropic SDK)
+│   └── internal/    ChatController, ChatService, dto/
+└── shared/      GlobalExceptionHandler (cross-cutting)
 ```
 
-Las clases de cada `internal/` son **package-private** siempre que es posible: el compilador de Java impide que un módulo acceda a las tripas de otro. Solo lo declarado en `api/` es visible desde fuera del módulo. (Algunas clases dentro de un módulo son `public` por necesidad de visibilidad entre subpaquetes hermanos —por ejemplo entre `cart/` y `order/`—; en esos casos el acoplamiento es interno al módulo e intencional, no una API pública.)
+## Layered design
 
-## Comunicación entre módulos
+Within each module: **controllers** translate HTTP and delegate, **services** hold business logic and transactions, **repositories** handle persistence, and **mappers** (MapStruct) convert between entities and immutable record DTOs. Business logic never lives in a controller; invariants live in the entity next to the data they protect.
 
-Los módulos se comunican exclusivamente a través de las interfaces públicas del paquete `api/`. El módulo `order` depende de `CatalogApi` y `UserApi`, pero nunca de sus implementaciones concretas ni de sus entidades.
+## Features
 
-Como punto de extensión, `catalog` publica un **evento de dominio** (`StockDecreasedEvent`) cada vez que se descuenta stock. Hoy no tiene consumidores, pero deja abierta la puerta a reaccionar a ese hecho (avisos de agotado, registro de movimientos de inventario) sin tocar el catálogo.
+- **Catalog** — full CRUD (writes restricted to `ADMIN`), with a Fragrantica-style **fragrance pyramid**: each perfume relates to reusable notes through a `PerfumeNote` association entity carrying the pyramid level (top / heart / base).
+- **Authentication** — stateless JWT, BCrypt-hashed passwords, `USER` / `ADMIN` roles. The user id is always taken from the token, never from the request.
+- **Cart & orders** — cart management, transactional checkout (decrements stock and freezes prices), a simulated pay step (`PENDING` → `PAID`), and order history.
+- **Order confirmation email** — on payment, an `OrderPaidEvent` is published and a `@TransactionalEventListener(AFTER_COMMIT)` sends an HTML email (Thymeleaf template) — only if the payment transaction actually committed, so a mail failure never breaks a paid order.
+- **AI assistant** — a `/api/chat` endpoint backed by the Anthropic Java SDK. The current catalog (names, brands, families, notes) is injected into the system prompt, so Claude recommends real perfumes from the shop. Conversation memory is handled by replaying the message history on each call.
 
-Además, ninguna relación JPA cruza las fronteras entre módulos: las referencias se guardan como identificadores simples (`Long`), no como relaciones `@ManyToOne`. Por eso `cart_items.perfume_id` no tiene clave foránea hacia `perfumes` — la integridad la garantiza el código validando contra `CatalogApi`, no la base de datos. Esto mantiene los módulos desacoplados también a nivel de persistencia.
+## Key endpoints
 
-## Capas dentro de cada módulo
-
-Cada módulo sigue el mismo patrón por capas: el **controller** traduce HTTP y delega; el **service** contiene la lógica de negocio y las transacciones; el **repository** habla con la base de datos; los **mappers** convierten entre entidades y DTOs. La lógica nunca vive en el controller.
-
-## Módulos
-
-- **catalog** — Catálogo de perfumes con CRUD (escritura solo para `ADMIN`). Expone `CatalogApi` (`findById`, `decreaseStock`) y el evento `StockDecreasedEvent`.
-- **user** — Registro, login con JWT y roles (`USER` / `ADMIN`). Contraseñas cifradas con BCrypt. Expone `UserApi` (`findIdByEmail`).
-- **order** — Carrito de compra, checkout transaccional (descuenta stock y congela precios), pago simulado e historial de pedidos.
-
-## Seguridad
-
-Autenticación sin estado con JWT. La consulta del catálogo es pública; la escritura requiere rol `ADMIN`; el carrito y los pedidos requieren usuario autenticado. El id del usuario se obtiene del token, no de la URL, garantizando que nadie accede a recursos de otro.
-
-## Endpoints
-
-| Método | Ruta | Descripción |
+| Method | Path | Description |
 |--------|------|-------------|
-| `POST` | `/api/auth/register` | Registrar usuario |
-| `POST` | `/api/auth/login` | Login (devuelve JWT) |
-| `GET` | `/api/perfumes` · `/{id}` | Consultar catálogo (público) |
-| `POST` · `PUT` · `DELETE` | `/api/perfumes` | Gestionar catálogo (ADMIN) |
-| `GET` · `POST` · `PUT` · `DELETE` | `/api/cart` · `/items` | Gestionar carrito |
-| `POST` | `/api/orders/checkout` | Confirmar compra |
-| `POST` | `/api/orders/{id}/pay` | Pagar pedido |
-| `GET` | `/api/orders` | Historial de pedidos |
+| `POST` | `/api/auth/register` · `/login` | Register / log in (returns JWT) |
+| `GET`  | `/api/perfumes` · `/{id}` | Browse catalog (public) |
+| `POST`/`PUT`/`DELETE` | `/api/perfumes` | Manage catalog (ADMIN) |
+| `GET`/`POST`/`PUT`/`DELETE` | `/api/cart` · `/items` | Manage cart (auth) |
+| `POST` | `/api/orders/checkout` · `/{id}/pay` | Checkout and pay (auth) |
+| `GET`  | `/api/orders` | Order history (auth) |
+| `POST` | `/api/chat` | AI assistant (auth) |
 
-## Puesta en marcha
+## Running locally
 
-Requisitos: **Java 21**, **Maven** y una instancia de **PostgreSQL** accesible en `localhost:5432` con una base de datos llamada `perfumeshop-api`.
+Requires **Java 21**, **Maven**, and **PostgreSQL** running on `localhost:5432` with a database named `perfumeshop-api`.
+
+Configuration and secrets are read from environment variables (with development defaults where safe):
+
+| Variable | Purpose |
+|----------|---------|
+| `DB_USER`, `DB_PASSWORD`, `DB_NAME` | Database credentials |
+| `JWT_SECRET` | JWT signing key |
+| `MAIL_HOST`, `MAIL_PORT`, `MAIL_USERNAME`, `MAIL_PASSWORD` | SMTP (e.g. Mailtrap in dev) |
+| `ANTHROPIC_API_KEY` | Anthropic API key for the chat |
 
 ```bash
-mvn spring-boot:run       # arranca la app (Flyway crea el esquema)
+mvn spring-boot:run
 ```
 
-- API en `http://localhost:8080`
-- Swagger UI en `/swagger-ui.html`
+- API: `http://localhost:8080`
+- Swagger UI: `/swagger-ui.html`
 
-Las credenciales y el secreto JWT se leen de variables de entorno (`DB_NAME`, `DB_USER`, `DB_PASSWORD`, `JWT_SECRET`) con valores por defecto para desarrollo. Para crear un administrador se promociona un usuario en la base de datos y se vuelve a iniciar sesión:
+Flyway creates and seeds the schema on startup. To make an admin, promote a user in the database (`UPDATE users SET role = 'ADMIN' WHERE email = '…'`) and log in again.
 
-```sql
-UPDATE users SET role = 'ADMIN' WHERE email = 'tu@email.com';
-```
+## Design decisions
 
-## Decisiones de diseño
+- Immutable `record` DTOs; the JPA entity is never exposed.
+- `BigDecimal` for money; Flyway owns the schema (Hibernate only validates).
+- Orders freeze name and price at purchase time (immutable historical record).
+- Errors as `ProblemDetail` (RFC 7807); each module handles its own exceptions.
+- Secrets never hard-coded — all sensitive config comes from environment variables.
 
-- DTOs inmutables (`record`); nunca se expone la entidad JPA.
-- `BigDecimal` para el dinero.
-- Flyway es dueño del esquema; Hibernate solo valida.
-- Los pedidos **congelan** nombre y precio en el momento de la compra (registro histórico inmutable).
-- Errores con `ProblemDetail` (RFC 7807); cada módulo maneja sus propias excepciones, con un `GlobalExceptionHandler` transversal para validación y casos no controlados.
-- Comunicación entre módulos por interfaces `api/` y un evento de dominio; sin relaciones JPA cruzando fronteras.
+## Status
 
-## Estado
-
-**Implementado:** catálogo, usuarios y pedidos completos; frontend Angular en desarrollo aparte. 
-
-## Pendiente / TODO
-- **Imágenes reales de producto.** Ahora mismo `image_url` apunta a fotos
-  genéricas de Unsplash (frascos ilustrativos, no los perfumes reales).
-  Sustituir por las imágenes reales de cada perfume. Opciones evaluadas:
-  URLs de tienda (rápido, zona gris legal) o subir a S3 (correcto, +
-  práctica AWS SAA-C03). Preferible S3.
-- Tests (backend).
-- Despliegue.
-- Taxonomía de excepciones: `PerfumeService` y el mapeo de excepciones de
-  dominio a códigos HTTP correctos (algunos 404 caen como 500).
+Catalog, users, cart, orders, notes, transactional email and the AI assistant are implemented. Test coverage is a work in progress. Deployment is the next step.
